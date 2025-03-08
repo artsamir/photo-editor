@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Editor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/photo-editing-styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Toolbox -->
+        <div id="toolbox">
+            <div class="tool" id="uploadTool" title="Upload"><i class="fas fa-upload"></i> Upload</div>
+            <div class="tool" id="cropTool" title="Crop"><i class="fas fa-crop"></i> Crop</div>
+            <div class="tool" id="eraseTool" title="Erase"><i class="fas fa-eraser"></i> Erase</div>
+            
+            <!-- Draw Tool with Sub-tools -->
+            <div class="tool" id="drawTool" title="Draw"><i class="fas fa-paint-brush"></i> Draw
+                <div class="sub-tools" id="drawSubTools">
+                    <div class="sub-tool" data-type="pen" data-size="5" title="Pen 5px"><i class="fas fa-pen"></i> Pen 5</div>
+                    <div class="sub-tool" data-type="pen" data-size="10" title="Pen 10px"><i class="fas fa-pen"></i> Pen 10</div>
+                    <div class="sub-tool" data-type="pen" data-size="15" title="Pen 15px"><i class="fas fa-pen"></i> Pen 15</div>
+                    <div class="sub-tool" data-type="brush" data-size="20" title="Brush 20px"><i class="fas fa-paint-brush"></i> Brush 20</div>
+                    <div class="sub-tool" data-type="brush" data-size="30" title="Brush 30px"><i class="fas fa-paint-brush"></i> Brush 30</div>
+                </div>
+            </div>
+
+            <div class="tool" id="textTool" title="Text"><i class="fas fa-font"></i> Text</div>
+            
+            <!-- Shape Tool with Sub-tools -->
+            <div class="tool" id="shapeTool" title="Shapes"><i class="fas fa-shapes"></i> Shapes
+                <div class="sub-tools" id="shapeSubTools">
+                    <div class="sub-tool" data-shape="circle" title="Circle"><i class="fas fa-circle"></i> Circle</div>
+                    <div class="sub-tool" data-shape="square" title="Square"><i class="fas fa-square"></i> Square</div>
+                    <div class="sub-tool" data-shape="rectangle" title="Rectangle"><i class="fas fa-rectangle-list"></i> Rectangle</div>
+                    <div class="sub-tool" data-shape="oval" title="Oval"><i class="fas fa-egg"></i> Oval</div>
+                    <div class="sub-tool" data-shape="star" title="Star"><i class="fas fa-star"></i> Star</div>
+                    <div class="sub-tool" data-shape="triangle" title="Triangle"><i class="fas fa-play"></i> Triangle</div>
+                    <div class="sub-tool" data-shape="arrow" title="Arrow"><i class="fas fa-arrow-right"></i> Arrow</div>
+                </div>
+            </div>
+
+            <!-- Effect Tool with Sub-tools -->
+            <div class="tool" id="effectTool" title="Effects"><i class="fas fa-magic"></i> Effects
+                <div class="sub-tools" id="effectSubTools">
+                    <div class="sub-tool" data-effect="fold" title="Fold"><i class="fas fa-fold"></i> Fold</div>
+                    <div class="sub-tool" data-effect="dust" title="Dust"><i class="fas fa-cloud"></i> Dust</div>
+                    <div class="sub-tool" data-effect="shadow" title="Shadow"><i class="fas fa-moon"></i> Shadow</div>
+                    <div class="sub-tool" data-effect="ripple" title="Ripple"><i class="fas fa-water"></i> Ripple</div>
+                    <div class="sub-tool" data-effect="artistic" title="Artistic"><i class="fas fa-paint-roller"></i> Artistic</div>
+                    <div class="sub-tool" data-effect="color" title="Color"><i class="fas fa-palette"></i> Color</div>
+                    <div class="sub-tool" data-effect="border" title="Border"><i class="fas fa-border-all"></i> Border</div>
+                </div>
+            </div>
+
+            <div class="tool" id="zoomInTool" title="Zoom In"><i class="fas fa-search-plus"></i> Zoom In</div>
+            <div class="tool" id="zoomOutTool" title="Zoom Out"><i class="fas fa-search-minus"></i> Zoom Out</div>
+            <div class="tool" id="undoTool" title="Undo"><i class="fas fa-undo"></i> Undo</div>
+            <div class="tool" id="redoTool" title="Redo"><i class="fas fa-redo"></i> Redo</div>
+            <div class="tool" id="saveTool" title="Save"><i class="fas fa-save"></i> Save</div>
+
+            <!-- Adjust Tool with Sub-tools -->
+            <div class="tool" id="adjustTool" title="Adjust"><i class="fas fa-sliders-h"></i> Adjust
+                <div class="sub-tools adjust-sub-tools" id="adjustSubTools">
+                    <div class="tool-slider"><label><i class="fas fa-sun"></i> Brightness</label><input type="range" id="brightnessSlider" min="-100" max="100" value="0"></div>
+                    <div class="tool-slider"><label><i class="fas fa-adjust"></i> Contrast</label><input type="range" id="contrastSlider" min="-100" max="100" value="0"></div>
+                    <div class="tool-slider"><label><i class="fas fa-moon"></i> Shadow</label><input type="range" id="shadowSlider" min="0" max="100" value="0"></div>
+                    <div class="tool-slider"><label><i class="fas fa-tint"></i> Hue</label><input type="range" id="hueSlider" min="-100" max="100" value="0"></div>
+                    <div class="tool-slider"><label><i class="fas fa-fill-drip"></i> Saturation</label><input type="range" id="saturationSlider" min="-100" max="100" value="0"></div>
+                </div>
+            </div>
+
+            <!-- Resize Inputs -->
+            <div class="tool" id="resizeTool"><i class="fas fa-ruler"></i> Resize</div>
+            <div class="tool-input"><label>Width</label><input type="number" id="widthInput" min="1" placeholder="Width"></div>
+            <div class="tool-input"><label>Height</label><input type="number" id="heightInput" min="1" placeholder="Height"></div>
+            <div class="tool-input"><label>Angle</label><input type="number" id="angleInput" placeholder="0"></div>
+            <div class="tool-input"><label>Skew</label><input type="number" id="skewInput" placeholder="0"></div>
+            <button id="resizeBtn">Apply Resize</button>
+            <div class="tool-input"><label>Fit:</label><select id="fitSelect"><option value="contain">Contain</option><option value="fill">Fill</option></select></div>
+        </div>
+
+        <!-- Workspace -->
+        <div id="workspace">
+            <div id="dropArea" class="drop-area">
+                <p>Drag & Drop Image Here or Click to Upload</p>
+                <input type="file" id="upload" accept="image/*" hidden>
+            </div>
+            <div id="previewBox" class="preview-box">
+                <img id="previewImage" src="" alt="Preview">
+                <button id="addToCanvas">Add to Canvas</button>
+            </div>
+            <canvas id="editingCanvas"></canvas>
+        </div>
+
+        <!-- Layer Box -->
+        <div id="layerBox">
+            <h3>Layers</h3>
+            <div id="layersList"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/camanjs/4.1.2/caman.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+
+    <script src="{{ url_for('static', filename='js/photo-editing-script.js') }}"></script>
+</body>
+</html>
